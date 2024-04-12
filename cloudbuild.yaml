@@ -11,32 +11,15 @@ steps:
 
 - name: 'gcr.io/$PROJECT_ID/envsubst'
   args: ['deployment.yaml']
-  id: envSubst-for-deployment.yml
+  id: envSubst-for-deployment-1
   env:
     - 'SHORT_SHA=$SHORT_SHA'
     - 'PROJECT_ID=$PROJECT_ID'
-  entrypoint: 'bash'
-  dir: './'
-  waitFor:
-    - Build-docker
-    - Push-docker
-
-- name: 'gcr.io/$PROJECT_ID/envsubst'
-  args: ['deployment.yaml']
-  id: envSubst-for-deployment.yml
-  env:
-    - 'SHORT_SHA=$SHORT_SHA'
-    - 'PROJECT_ID=$PROJECT_ID'
-  entrypoint: 'bash'
-  dir: './'
-  waitFor:
-    - Build-docker
-    - Push-docker
   entrypoint: '/bin/sh'
-  args:
-    - '-c'
-    - |
-      echo "SHORT_SHA: $SHORT_SHA"
+  dir: './'
+  waitFor:
+    - Build-docker
+    - Push-docker
 
 - name: "gcr.io/cloud-builders/gke-deploy"
   args:
@@ -49,4 +32,4 @@ steps:
   waitFor:
     - Build-docker
     - Push-docker
-    - envSubst-for-deployment.yml
+    - envSubst-for-deployment-1
