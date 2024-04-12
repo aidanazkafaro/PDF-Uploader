@@ -18,18 +18,8 @@ const storage = new Storage({
 dotenv.config();
 
 const connectionString = process.env.DB_STRING;
-
-// Set up file upload configuration
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, './assets'); // Store uploaded files in the 'assets' directory
-//   },
-//   filename: function (req, file, cb) {
-//     const uniqueSuffix = Date.now();
-//     cb(null, uniqueSuffix + file.originalname); // Create a unique filename for each uploaded file
-//   },
-// });
-
+const bucketName = 'pdf-bucket-001';
+const gcs = storage.bucket(bucketName);
 const upload = multer({ storage: multer.diskStorage({}) });
 
 app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
@@ -92,22 +82,6 @@ app.post('/api/login', async (req, res) => {
     return res.json({ status: 'error', user: false });
   }
 });
-
-// Handle file uploads
-// app.post('/upload-files', upload.single('file'), async (req, res) => {
-//   console.log(req.file);
-//   const title = req.body.title;
-//   const fileName = req.file.filename;
-//   try {
-//     await PDFFile.create({ title: title, pdf: fileName });
-//     res.send({ status: 'ok' });
-//   } catch (error) {
-//     res.json({ status: error });
-//   }
-// });
-
-const bucketName = 'pdf-bucket-001';
-const gcs = storage.bucket(bucketName);
 
 app.post('/upload-files', upload.single('file'), async (req, res) => {
   try {
