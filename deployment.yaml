@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
       - name: pdf-backend
-        image:  asia.gcr.io/$PROJECT_ID/production/pdf-backend:$SHORT_SHA
+        image:  asia.gcr.io/$PROJECT_ID/production/pdf-upload:$SHORT_SHA
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
