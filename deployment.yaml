@@ -8,13 +8,13 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  name: pdf-upload-backend
+  name: pdf-backend
   namespace: production
   labels:
-    app: pdf-upload-backend
+    app: pdf-backend
 spec:
   selector:
-    app: pdf-upload-backend
+    app: pdf-backend
   ports:
   - port: 3000
     name: http
@@ -25,26 +25,26 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pdf-upload-backend
+  name: pdf-backend
   namespace: production
 spec:
   selector:
     matchLabels:
-      app: pdf-upload-backend
+      app: pdf-backend
   strategy:
     type: RollingUpdate
   template: #Template for container
     metadata:
       labels:
-        app: pdf-upload-backend
+        app: pdf-backend
     spec:
       containers:
-      - name: pdf-upload-backend
-        image:  asia.gcr.io/$PROJECT_ID/production/pdf-upload-backend:$SHORT_SHA
+      - name: pdf-backend
+        image:  asia.gcr.io/$PROJECT_ID/production/pdf-backend:$SHORT_SHA
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
-          name: pdf-upload-backend
+          name: pdf-backend
         resources:
           requests:
             cpu: 50m
@@ -54,7 +54,7 @@ spec:
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: pdf-upload-backend
+  name: pdf-backend
   namespace: production
 spec:
   maxReplicas: 3
@@ -62,21 +62,21 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: pdf-upload-backend
+    name: pdf-backend
   targetCPUUtilizationPercentage: 100
 
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: pdf-upload-backend
+  name: pdf-backend
   namespace: production
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: pdf-upload-backend
+    kubernetes.io/ingress.global-static-ip-name: pdf-backend
     kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
-    - host: app.pdf-upload-backend.com
+    - host: app.pdf-backend.com
       http:
         paths:
         - path: /*
