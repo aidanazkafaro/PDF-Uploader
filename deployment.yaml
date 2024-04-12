@@ -70,16 +70,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: pdf-backend
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: pdf-uploader
   namespace: production
 spec:
-  rules:
-    - http:
-        paths:
-          - path: /*
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: pdf-backend
-                port:
-                  number: 80
-  ingressClassName: "nginx"
+  defaultBackend:
+      service:
+        name: pdf-backend
+        port:
+          number: 3000
