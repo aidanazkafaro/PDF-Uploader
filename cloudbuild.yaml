@@ -1,29 +1,52 @@
-steps: 
-- id: Build-docker
-  name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'asia.gcr.io/$PROJECT_ID/production/pdf-upload:$SHORT_SHA', '.']
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'asia.gcr.io/$PROJECT_ID/production/pdf-upload-backend:$SHORT_SHA', '.']
+  id: Build-docker
   timeout: 900s
 
-- id: Push-docker
-  name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'asia.gcr.io/$PROJECT_ID/production/pdf-upload:$SHORT_SHA']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'asia.gcr.io/$PROJECT_ID/production/pdf-upload-backend:$SHORT_SHA']
+  id: Push-docker
   timeout: 900s
 
-- id: envSubst-for-deployment.yml
-  name: 'gcr.io/$PROJECT_ID/envsubst'
+- name: 'gcr.io/$PROJECT_ID/envsubst'
+  args: ['deployment.yaml']
+  id: envSubst-for-deployment.yml
   env:
     - 'SHORT_SHA=$SHORT_SHA'
     - 'PROJECT_ID=$PROJECT_ID'
-  args: ['deployment.yaml']
+  entrypoint: 'bash'
+  dir: './'
+  waitFor:
+    - Build-docker
+    - Push-docker
 
-- id: Deploy-to-GKE
-  name: "gcr.io/cloud-builders/gke-deploy" 
+- name: 'gcr.io/$PROJECT_ID/envsubst'
+  args: ['deployment.yaml']
+  id: envSubst-for-deployment.yml
+  env:
+    - 'SHORT_SHA=$SHORT_SHA'
+    - 'PROJECT_ID=$PROJECT_ID'
+  entrypoint: 'bash'
+  dir: './'
+  waitFor:
+    - Build-docker
+    - Push-docker
+  entrypoint: '/bin/sh'
+  args:
+    - '-c'
+    - |
+      echo "SHORT_SHA: $SHORT_SHA"
+
+- name: "gcr.io/cloud-builders/gke-deploy"
   args:
   - run
   - --filename=deployment.yaml
   - --cluster=pdf-upload-production
   - --location=asia-southeast2-a
+  id: Deploy-to-GKE
   timeout: 900s
-
-# Global Timeout
-timeout: '3600s'
+  waitFor:
+    - Build-docker
+    - Push-docker
+    - envSubst-for-deployment.yml
