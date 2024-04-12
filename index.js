@@ -26,7 +26,6 @@ app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'assets')));
 
-
 // Connect to MongoDB
 mongoose
   .connect(connectionString, {autoIndex: true})
@@ -134,7 +133,6 @@ app.get('/pdf/:filename', async (req, res) => {
     action: 'read',
     expires: Date.now() + 1000 * 60 * 60,
   });
-  // console.log(result[0]);
   res.send(result[0]);
 });
 
