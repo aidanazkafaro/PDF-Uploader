@@ -69,7 +69,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: pdf-upload-backend
+  name: pdf-backend
   namespace: production
 spec:
   rules:
@@ -79,7 +79,7 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: pdf-upload-backend
+                name: pdf-backend
                 port:
                   number: 80
   ingressClassName: "nginx"
