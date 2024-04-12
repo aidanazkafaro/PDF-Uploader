@@ -16,9 +16,9 @@ spec:
   selector:
     app: pdf-upload-backend
   ports:
-    - name: http
-      port: 3000
-      targetPort: 3000
+  - port: 3000
+    name: http
+    targetPort: 3000
   type: NodePort
 
 ---
@@ -40,11 +40,11 @@ spec:
     spec:
       containers:
       - name: pdf-upload-backend
-        image:  asia.gcr.io/pipelines-420101/production/pdf-upload-backend:$SHORT_SHA
+        image:  asia.gcr.io/$PROJECT_ID/production/pdf-upload-backend:$SHORT_SHA
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
-          name: backend-port
+          name: pdf-upload-backend
         resources:
           requests:
             cpu: 50m
@@ -57,8 +57,8 @@ metadata:
   name: pdf-upload-backend
   namespace: production
 spec:
-  maxReplicas: 25
-  minReplicas: 3
+  maxReplicas: 3
+  minReplicas: 1
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
@@ -71,15 +71,18 @@ kind: Ingress
 metadata:
   name: pdf-upload-backend
   namespace: production
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: pdf-upload-backend
+    kubernetes.io/ingress.allow-http: "false"
 spec:
   rules:
-    - http:
+    - host: app.pdf-upload-backend.com
+      http:
         paths:
-          - path: /*
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: pdf-upload-backend
-                port:
-                  number: 3000
-  ingressClassName: "nginx"
+        - path: /*
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: pdf-backend
+              port: 
+                number: 3000
