@@ -44,7 +44,7 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
-          name: pdf-upload-backend
+          name: backend-port
         resources:
           requests:
             cpu: 50m
