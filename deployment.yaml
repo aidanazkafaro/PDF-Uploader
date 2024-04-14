@@ -27,8 +27,8 @@ kind: Deployment
 metadata:
   name: pdf-backend
   namespace: production
+serviceAccountName: pdf-k8s-sa
 spec:
-  serviceAccountName: pdf-k8s-sa
   selector:
     matchLabels:
       app: pdf-backend
