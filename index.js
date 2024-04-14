@@ -9,15 +9,45 @@ const multer = require('multer');
 const dotenv = require('dotenv');
 const path = require('path');
 const { Storage } = require('@google-cloud/storage');
+const {SecretManagerServiceClient} = require('@google-cloud/secret-manager').v1;
+let connectionString = null;
+
+const secretManagerClient = new SecretManagerServiceClient();
+
+async function callGetSecret() {
+  const request = {
+    name: `projects/222322846740/secrets/pdf-mongodb-str/versions/latest`,
+  }
+
+  try {
+
+    // Run request
+    const [version] = await secretManagerClient.accessSecretVersion(request);
+    const payload = version.payload.data.toString('utf8');
+    // console.log(`Secret data: ${payload}`);
+    connectionString = payload;
+
+    // Connect to MongoDB
+    mongoose
+    .connect(connectionString, {autoIndex: true})
+    .then(() => {
+      console.log('MongoDB connected');
+    })
+    .catch((error) => {
+      console.error('MongoDB connection failed:', error);
+    });
+
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+callGetSecret();
 
 const storage = new Storage({
   projectId: "pipelines-420101",
-  keyFilename: "service-account.json",
 });
 
-dotenv.config();
-
-const connectionString = process.env.DB_STRING;
 const bucketName = 'pdf-bucket-001';
 const gcs = storage.bucket(bucketName);
 const upload = multer({ storage: multer.diskStorage({}) });
@@ -26,15 +56,6 @@ app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'assets')));
 
-// Connect to MongoDB
-mongoose
-  .connect(connectionString, {autoIndex: true})
-  .then(() => {
-    console.log('MongoDB connected');
-  })
-  .catch((error) => {
-    console.error('MongoDB connection failed:', error);
-  });
 
 // Register a new user
 app.post('/api/register', async (req, res) => {
@@ -143,5 +164,5 @@ app.get('/', async (req, res) => {
 
 // Start the server
 app.listen(3000, () => {
-  console.log('Server started on 3000');
+  console.log('Server started on port 3000');
 });
