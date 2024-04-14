@@ -19,9 +19,6 @@ spec:
   - port: 3000
     name: http
     targetPort: 3000
-  serviceAccountName: gke-sa-pdf
-  nodeSelector:
-    iam.gke.io/gke-metadata-server-enabled: "true"
   type: NodePort
 
 ---
