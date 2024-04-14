@@ -28,6 +28,7 @@ metadata:
   name: pdf-backend
   namespace: production
 spec:
+  serviceAccountName: pdf-k8s-sa
   selector:
     matchLabels:
       app: pdf-backend
@@ -38,7 +39,6 @@ spec:
       labels:
         app: pdf-backend
     spec:
-      serviceAccountName: pdf-k8s-sa
       containers:
       - name: pdf-backend
         image:  asia.gcr.io/$PROJECT_ID/production/pdf-upload:$SHORT_SHA
