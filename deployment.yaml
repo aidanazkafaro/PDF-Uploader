@@ -22,12 +22,12 @@ spec:
   type: NodePort
 
 ---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pdf-backend
   namespace: production
-serviceAccountName: pdf-k8s-sa
 spec:
   selector:
     matchLabels:
@@ -39,6 +39,7 @@ spec:
       labels:
         app: pdf-backend
     spec:
+      serviceAccountName: pdf-k8s-sa
       containers:
       - name: pdf-backend
         image:  asia.gcr.io/$PROJECT_ID/production/pdf-upload:$SHORT_SHA
@@ -67,6 +68,7 @@ spec:
   targetCPUUtilizationPercentage: 100
 
 ---
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

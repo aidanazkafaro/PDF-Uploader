@@ -11,21 +11,26 @@ const path = require('path');
 const { Storage } = require('@google-cloud/storage');
 const {SecretManagerServiceClient} = require('@google-cloud/secret-manager').v1;
 let connectionString = null;
-
+let secret_sa = null;
 const secretManagerClient = new SecretManagerServiceClient();
 
 async function callGetSecret() {
   const request = {
-    name: `projects/222322846740/secrets/pdf-mongodb-str/versions/latest`,
+    db_str: `projects/222322846740/secrets/pdf-mongodb-str/versions/latest`,
+    sa: 'projects/222322846740/secrets/gcs-service-account/versions/latest'
   }
 
   try {
 
     // Run request
-    const [version] = await secretManagerClient.accessSecretVersion(request);
-    const payload = version.payload.data.toString('utf8');
+    const [version_db] = await secretManagerClient.accessSecretVersion({name: request.db_str});
+    const [version_sa] = await secretManagerClient.accessSecretVersion({name: request.sa});
+    const payload_db = version_db.payload.data.toString('utf8'); 
+    const payload_sa = version_sa.payload.data.toString('utf8'); 
     // console.log(`Secret data: ${payload}`);
-    connectionString = payload;
+    connectionString = payload_db;
+    secret_sa = payload_sa;
+
 
     // Connect to MongoDB
     mongoose
@@ -46,6 +51,7 @@ callGetSecret();
 
 const storage = new Storage({
   projectId: "pipelines-420101",
+  keyFile: JSON.parse(secret_sa),
 });
 
 const bucketName = 'pdf-bucket-001';
