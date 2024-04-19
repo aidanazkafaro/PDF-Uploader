@@ -21,7 +21,7 @@ steps:
   args:
   - run
   - --filename=deployment.yaml
-  - --cluster=pdf-upload-production
+  - --cluster=pdf-backend-production
   - --location=asia-southeast2-a
   timeout: 900s
 
