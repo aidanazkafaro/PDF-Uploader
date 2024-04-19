@@ -30,6 +30,8 @@ async function callGetSecret() {
     // console.log(`Secret data: ${payload}`);
     connectionString = payload_db;
     secret_sa = payload_sa;
+    console.log(connectionString);
+    console.log(secret_sa);
 
 
     // Connect to MongoDB
@@ -43,7 +45,8 @@ async function callGetSecret() {
     });
 
   } catch (error) {
-    console.error('Error:', error);
+
+    console.error('Fail to access secret or connect to mongoDB. ', error);
   }
 }
 
