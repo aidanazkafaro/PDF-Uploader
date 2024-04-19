@@ -61,9 +61,14 @@ const bucketName = 'pdf-bucket-001';
 const gcs = storage.bucket(bucketName);
 const upload = multer({ storage: multer.diskStorage({}) });
 
-app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'assets')));
+// Define the CORS options
+const corsOptions = {
+  credentials: true,
+  origin: ["https://pdf-uploader-frontend.vercel.app/"] // Whitelist the domains you want to allow
+};
+
+app.use(cors(corsOptions)); // Use the cors middleware with your optionsapp.use(express.static(path.join(__dirname, 'assets')));
 
 
 // Register a new user
