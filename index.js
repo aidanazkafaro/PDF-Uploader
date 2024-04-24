@@ -65,7 +65,7 @@ app.use(express.json());
 // Define the CORS options
 const corsOptions = {
   credentials: true,
-  origin: ["https://pdf-uploader-frontend.vercel.app/"] // Whitelist the domains you want to allow
+  origin: ["*"] // Whitelist the domains you want to allow
 };
 
 app.use(cors(corsOptions)); // Use the cors middleware with your optionsapp.use(express.static(path.join(__dirname, 'assets')));
