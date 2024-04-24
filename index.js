@@ -68,7 +68,7 @@ const corsOptions = {
   origin: ["*"] // Whitelist the domains you want to allow
 };
 
-app.use(cors(corsOptions)); // Use the cors middleware with your optionsapp.use(express.static(path.join(__dirname, 'assets')));
+app.use(cors()); // Use the cors middleware with your optionsapp.use(express.static(path.join(__dirname, 'assets')));
 
 
 // Register a new user
